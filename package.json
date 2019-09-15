@@ -1,0 +1,29 @@
+{
+  "name": "task",
+  "version": "1.0.0",
+  "description": "test task",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev-start": "nodemon --inspect index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://mankokv@bitbucket.org/mankokv/task.git"
+  },
+  "author": "KostiantynM",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/mankokv/task#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.0.0",
+    "nodemon": "^1.19.2"
+  },
+  "engines": {
+    "node": "9.8.0"
+  }
+}
