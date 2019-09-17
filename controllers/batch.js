@@ -25,7 +25,7 @@ exports.action = async (req, res, next) => {
   try {
     const errors = Array(0);
     // TODO: K. move maxTries, successLimit into config
-    const maxTries = 1,
+    const maxTries = 2,
       successLimit = 0.93;
     const { endpoint, payload } = req.body;
 
@@ -45,16 +45,20 @@ exports.action = async (req, res, next) => {
     }
 
     if (request[endpoint.method] == null) {
-      throw new Error('Method not supported')
+      throw new Error('Method not supported');
     }
+    //TODO K. move make URL logic to services
+    //TODO K. move doAction logic to services
 
-    let result = null,
-      tries = 0,
-      success = 0;
+    let success = 0,
+      s = [];
 
     for (let i = 0, l = payload.length; i < l; i++) {
       const { params, body } = payload[i];
-      let { url } = endpoint;
+      let { url } = endpoint,
+        tries = 0,
+        result = null,
+        requestStatus = 'failed';
 
       //TODO: K. implement url validation
       Object.keys(params).forEach((key) => {
@@ -62,19 +66,23 @@ exports.action = async (req, res, next) => {
       });
 
       while (result === null && tries !== maxTries) {
-        result = await doAction(request[endpoint.method], url, payload[i].body);
+        result = await doAction(request[endpoint.method], url, body);
         tries++;
       }
 
-      if (result !== null && maxTries <= tries) {
+      if (result !== null && tries <= maxTries) {
         success++;
+        requestStatus = 'success';
       }
+
+      s.push({ tries, requestStatus, url, body });
     }
 
     const status =
       success / payload.length < successLimit ? 'failed' : 'success';
 
     res.status(200).json({
+      s,
       status
     });
   } catch (err) {
